@@ -33,6 +33,21 @@
             z-index: 100;
         }
 
+        .logo-area {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-img {
+            width: 40px;
+            height: 40px;
+            object-fit: cover;
+            border-radius: 50%;
+            border: 1px solid #a855f7;
+            box-shadow: 0 0 10px #a855f7;
+        }
+
         .logo-area h1 {
             font-family: 'Cinzel', serif;
             font-size: 24px;
@@ -256,6 +271,7 @@
 
     <header>
         <div class="logo-area">
+            <img src="logo.png" alt="Logo" class="logo-img" onerror="this.src='https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=100&q=80'">
             <h1>KUZNETSOV</h1>
         </div>
         <nav>
@@ -310,13 +326,13 @@
         <!-- ADMIN PANEL -->
         <div id="admin" class="bolum">
             <div class="admin-panel-box">
-                <h3 style="font-family:'Cinzel',serif; margin-bottom:20px; text-align:center;">İçerik Ekle</h3>
+                <h3 style="font-family:'Cinzel',serif; margin-bottom:20px; text-align:center;">İçerik Ekle (Link ile)</h3>
                 <div class="form-group">
                     <label>Kategori</label>
                     <select id="ekleKategori" class="form-control">
-                        <option value="wallpapers">Wallpaper (Resim Yükle)</option>
-                        <option value="edits">Edit (MP4 Video Yükle)</option>
-                        <option value="music">Müzik (Ses Dosyası Yükle - MP3)</option>
+                        <option value="wallpapers">Wallpaper (Resim Linki)</option>
+                        <option value="edits">Edit (MP4 Video Linki)</option>
+                        <option value="music">Müzik (MP3 Ses Linki)</option>
                         <option value="discord">Discord Sunucusu (Link)</option>
                     </select>
                 </div>
@@ -328,13 +344,9 @@
                     <label>Aciklama</label>
                     <input type="text" id="ekleAciklama" class="form-control" placeholder="Aciklama yazin">
                 </div>
-                <div class="form-group" id="dosyaAlani">
-                    <label id="dosyaLabel">Bilgisayardan Resim Seç</label>
-                    <input type="file" id="ekleDosya" class="form-control" accept="image/*">
-                </div>
-                <div class="form-group" id="linkAlani" style="display:none;">
-                    <label>Discord Linki</label>
-                    <input type="text" id="ekleLink" class="form-control" placeholder="https://discord.gg/...">
+                <div class="form-group" id="linkAlani">
+                    <label id="linkEtiket">Medya / Resim Linki (URL)</label>
+                    <input type="text" id="ekleLink" class="form-control" placeholder="https://...">
                 </div>
                 <button class="auth-btn" id="ekleKaydetBtn" style="width:100%; margin-top:10px;">Ekle</button>
             </div>
@@ -353,11 +365,20 @@
     </div>
 
     <script>
-        let veriler = JSON.parse(localStorage.getItem('kuznetsovDB')) || {
-            wallpapers: [{title: "Ornek Wallpaper", desc: "Mor tema", img: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=600&q=80"}],
-            discord: [{title: "Kuznetsov Klan", desc: "Ana Discord sunucumuz", link: "https://discord.com"}],
-            edits: [{title: "Ornek Edit", desc: "Aksiyon klibi", src: "https://www.w3schools.com/html/mov_bbb.mp4"}],
-            music: [{title: "Vibe Şarkısı", src: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3"}]
+        let veriler = {
+            wallpapers: [
+                {title: "Kuznetsov Özel Logo", desc: "Ana Klan Logosu", img: "logo.png"},
+                {title: "Ornek Wallpaper", desc: "Mor tema", img: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=600&q=80"}
+            ],
+            discord: [
+                {title: "Kuznetsov Klan", desc: "Ana Discord sunucumuz", link: "https://discord.com"}
+            ],
+            edits: [
+                {title: "Ornek Edit", desc: "Aksiyon klibi", src: "https://www.w3schools.com/html/mov_bbb.mp4"}
+            ],
+            music: [
+                {title: "Vibe Şarkısı", src: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3"}
+            ]
         };
 
         let adminMi = false;
@@ -415,8 +436,6 @@
                     mContainer.innerHTML += '<div style="background: rgba(0,0,0,0.4); padding: 15px; border-radius: 8px; border: 1px solid rgba(168, 85, 247, 0.3);"><h3 style="margin-bottom: 10px; color: #fff; font-size: 18px;">' + item.title + '</h3><audio controls style="width: 100%;"><source src="' + item.src + '" type="audio/mpeg"></audio><button class="delete-btn" style="margin-top: 10px;" onclick="sil(\'music\', ' + i + ')">Şarkıyı Sil</button></div>';
                 }
             }
-
-            localStorage.setItem('kuznetsovDB', JSON.stringify(veriler));
         }
 
         function sil(kat, index) {
@@ -477,32 +496,21 @@
 
             document.getElementById('ekleKategori').addEventListener('change', function() {
                 let kat = this.value;
-                let dosyaLabel = document.getElementById('dosyaLabel');
-                let dosyaInput = document.getElementById('ekleDosya');
+                let linkEtiket = document.getElementById('linkEtiket');
                 let aciklamaGrubu = document.getElementById('aciklamaGrubu');
 
                 if(kat === 'discord') {
-                    document.getElementById('dosyaAlani').style.display = 'none';
-                    document.getElementById('linkAlani').style.display = 'block';
+                    linkEtiket.innerText = 'Discord Linki';
                     aciklamaGrubu.style.display = 'block';
                 } else if(kat === 'edits') {
-                    document.getElementById('dosyaAlani').style.display = 'block';
-                    document.getElementById('linkAlani').style.display = 'none';
+                    linkEtiket.innerText = 'MP4 Video Linki (URL)';
                     aciklamaGrubu.style.display = 'block';
-                    dosyaLabel.innerText = 'Bilgisayardan MP4 Video Seç';
-                    dosyaInput.accept = 'video/mp4,video/*';
                 } else if(kat === 'music') {
-                    document.getElementById('dosyaAlani').style.display = 'block';
-                    document.getElementById('linkAlani').style.display = 'none';
+                    linkEtiket.innerText = 'MP3 Müzik Linki (URL)';
                     aciklamaGrubu.style.display = 'none';
-                    dosyaLabel.innerText = 'Bilgisayardan Müzik Seç (MP3)';
-                    dosyaInput.accept = 'audio/*';
                 } else {
-                    document.getElementById('dosyaAlani').style.display = 'block';
-                    document.getElementById('linkAlani').style.display = 'none';
+                    linkEtiket.innerText = 'Resim Linki (URL)';
                     aciklamaGrubu.style.display = 'block';
-                    dosyaLabel.innerText = 'Bilgisayardan Resim Seç';
-                    dosyaInput.accept = 'image/*';
                 }
             });
 
@@ -510,51 +518,31 @@
                 let kat = document.getElementById('ekleKategori').value;
                 let baslik = document.getElementById('ekleBaslik').value;
                 let aciklama = document.getElementById('ekleAciklama').value;
+                let link = document.getElementById('ekleLink').value;
 
-                if(!baslik) {
-                    alert("Lütfen başlık yazın!");
+                if(!baslik || !link) {
+                    alert("Lütfen başlık ve link alanlarını doldurun!");
                     return;
                 }
 
                 if(kat === 'discord') {
-                    let link = document.getElementById('ekleLink').value || 'https://discord.com';
                     veriler.discord.push({title: baslik, desc: aciklama, link: link});
-                    islemBitir(kat);
+                } else if(kat === 'music') {
+                    veriler.music.push({title: baslik, src: link});
+                } else if(kat === 'edits') {
+                    veriler.edits.push({title: baslik, desc: aciklama, src: link});
                 } else {
-                    let dosyaInput = document.getElementById('ekleDosya');
-                    if(dosyaInput.files && dosyaInput.files[0]) {
-                        let file = dosyaInput.files[0];
-                        let reader = new FileReader();
-                        
-                        reader.onload = function(e) {
-                            let base64Veri = e.target.result;
-                            if(kat === 'music') {
-                                veriler.music.push({title: baslik, src: base64Veri});
-                            } else if(kat === 'edits') {
-                                veriler.edits.push({title: baslik, desc: aciklama, src: base64Veri});
-                            } else {
-                                veriler[kat].push({title: baslik, desc: aciklama, img: base64Veri});
-                            }
-                            islemBitir(kat);
-                        };
-                        
-                        reader.readAsDataURL(file);
-                    } else {
-                        alert("Lütfen bilgisayardan bir dosya seçin!");
-                    }
+                    veriler.wallpapers.push({title: baslik, desc: aciklama, img: link});
                 }
+
+                listeleHerSey();
+                alert("Başarıyla eklendi! (Kalcı olması için bu yeni içeriği koddaki 'veriler' kısmına ekleyebilir veya GitHub'a yükleyebilirsin)");
+                document.getElementById('ekleBaslik').value = '';
+                document.getElementById('ekleAciklama').value = '';
+                document.getElementById('ekleLink').value = '';
+                sayfaGecis(kat);
             });
         };
-
-        function islemBitir(kat) {
-            listeleHerSey();
-            alert("Başarıyla eklendi!");
-            document.getElementById('ekleBaslik').value = '';
-            document.getElementById('ekleAciklama').value = '';
-            document.getElementById('ekleDosya').value = '';
-            document.getElementById('ekleLink').value = '';
-            sayfaGecis(kat);
-        }
     </script>
 </body>
 </html>
