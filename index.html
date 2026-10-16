@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kuznetsov World</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: #080312;
+            color: #e2e8f0;
+            font-family: 'Rajdhani', sans-serif;
+            background-image: radial-gradient(circle at center, #1b0a33 0%, #080312 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 50px;
+            background: rgba(8, 3, 18, 0.95);
+            border-bottom: 1px solid rgba(168, 85, 247, 0.3);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo-area h1 {
+            font-family: 'Cinzel', serif;
+            font-size: 24px;
+            letter-spacing: 2px;
+            color: #fff;
+            text-shadow: 0 0 10px #a855f7;
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 25px;
+        }
+
+        nav ul li a {
+            color: #e2e8f0;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 16px;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        nav ul li a:hover, nav ul li a.aktif {
+            color: #a855f7;
+            text-shadow: 0 0 8px #a855f7;
+        }
+
+        .auth-btn {
+            background: linear-gradient(135deg, #7c3aed, #a855f7);
+            border: none;
+            color: white;
+            padding: 8px 20px;
+            font-weight: 700;
+            border-radius: 4px;
+            cursor: pointer;
+            box-shadow: 0 0 15px rgba(168, 85, 247, 0.4);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        .bolum {
+            display: none;
+        }
+
+        .bolum.goster {
+            display: block;
+        }
+
+        .hero {
+            text-align: center;
+            padding: 80px 20px;
+            background: rgba(18, 10, 32, 0.85);
+            border: 1px solid rgba(168, 85, 247, 0.3);
+            border-radius: 12px;
+            box-shadow: 0 0 40px rgba(0,0,0,0.9);
+        }
+
+        .hero h2 {
+            font-family: 'Cinzel', serif;
+            font-size: 46px;
+            margin-bottom: 20px;
+            color: #fff;
+            text-shadow: 0 0 25px #a855f7;
+        }
+
+        .hero p {
+            font-size: 20px;
+            color: #cbd5e1;
+            max-width: 750px;
+            margin: 0 auto 30px auto;
+            line-height: 1.6;
+        }
+
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            margin-top: 20px;
+        }
+
+        .card {
+            background: rgba(18, 10, 32, 0.85);
+            border: 1px solid rgba(168, 85, 247, 0.3);
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+        }
+
+        .card-img {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+            border-bottom: 1px solid rgba(168, 85, 247, 0.3);
+        }
+
+        .card-video {
+            width: 100%;
+            max-height: 320px;
+            object-fit: contain;
+            border-bottom: 1px solid rgba(168, 85, 247, 0.3);
+            background: #000;
+            display: block;
+        }
+
+        .card-content {
+            padding: 20px;
+        }
+
+        .card-content h3 {
+            margin-bottom: 10px;
+            color: #fff;
+            font-size: 20px;
+        }
+
+        .card-content p {
+            color: #94a3b8;
+            font-size: 14px;
+            margin-bottom: 15px;
+        }
+
+        .card-btn {
+            display: inline-block;
+            background: transparent;
+            border: 1px solid #a855f7;
+            color: #a855f7;
+            padding: 6px 15px;
+            border-radius: 4px;
+            text-decoration: none;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .card-btn:hover {
+            background: #a855f7;
+            color: #fff;
+        }
+
+        .delete-btn {
+            background: #ef4444;
+            border: none;
+            color: white;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            margin-top: 10px;
+            margin-left: 10px;
+            display: none;
+            font-weight: bold;
+        }
+
+        body.admin-aktif .delete-btn {
+            display: inline-block;
+        }
+
+        .admin-panel-box {
+            background: rgba(18, 10, 32, 0.85);
+            border: 1px solid #a855f7;
+            padding: 30px;
+            border-radius: 12px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: #a855f7;
+            font-weight: 700;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 10px;
+            background: rgba(0,0,0,0.5);
+            border: 1px solid rgba(168, 85, 247, 0.3);
+            border-radius: 4px;
+            color: #fff;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.8);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background: rgba(18, 10, 32, 0.95);
+            border: 1px solid #a855f7;
+            padding: 40px;
+            border-radius: 10px;
+            width: 350px;
+            text-align: center;
+            position: relative;
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 10px; right: 15px;
+            cursor: pointer;
+            color: #aaa;
+            font-size: 20px;
+        }
+    </style>
+</head>
+<body id="govde">
+
+    <header>
+        <div class="logo-area">
+            <h1>KUZNETSOV</h1>
+        </div>
+        <nav>
+            <ul>
+                <li><a id="link-home" class="aktif" data-target="home">Ana Sayfa</a></li>
+                <li><a id="link-wallpapers" data-target="wallpapers">Wallpapers</a></li>
+                <li><a id="link-discord" data-target="discord">Discord</a></li>
+                <li><a id="link-edits" data-target="edits">Edits (MP4)</a></li>
+                <li><a id="link-music" data-target="music">Muzik</a></li>
+                <li><a id="link-admin" style="display:none; color:#a855f7;" data-target="admin">Admin Panel</a></li>
+            </ul>
+        </nav>
+        <button class="auth-btn" id="girisBtn">Giris Yap</button>
+    </header>
+
+    <div class="container">
+        <!-- ANA SAYFA -->
+        <div id="home" class="bolum goster">
+            <div class="hero">
+                <h2>KUZNETSOV AILESINE HOS GELDINIZ</h2>
+                <p>Bu platform; yalnizca Kuznetsov ailesinin, yakin dostlarin ve ozel toplulugun erisebilecegi duvar kagitlari, MP4 editler ve ozel içeriklerin paylasildigi alandir.</p>
+                <button class="card-btn" id="toWallpapersBtn">Wallpapers Incele</button>
+            </div>
+        </div>
+
+        <!-- WALLPAPERS -->
+        <div id="wallpapers" class="bolum">
+            <h2 style="font-family:'Cinzel',serif; margin-bottom:20px; color:#a855f7;">Wallpapers</h2>
+            <div class="grid-container" id="wallpaperGrid"></div>
+        </div>
+
+        <!-- DISCORD -->
+        <div id="discord" class="bolum">
+            <h2 style="font-family:'Cinzel',serif; margin-bottom:20px; color:#a855f7;">Discord Sunuculari</h2>
+            <div class="grid-container" id="discordGrid"></div>
+        </div>
+
+        <!-- EDITS (MP4) -->
+        <div id="edits" class="bolum">
+            <h2 style="font-family:'Cinzel',serif; margin-bottom:20px; color:#a855f7;">Edits (MP4 Videoları)</h2>
+            <div class="grid-container" id="editGrid"></div>
+        </div>
+
+        <!-- MUZIK -->
+        <div id="music" class="bolum">
+            <div class="hero" style="max-width: 800px; margin: 0 auto;">
+                <h2 style="margin-bottom: 20px;">Kuznetsov Muzikleri</h2>
+                <div id="musicListContainer" style="display: flex; flex-direction: column; gap: 20px;"></div>
+            </div>
+        </div>
+
+        <!-- ADMIN PANEL -->
+        <div id="admin" class="bolum">
+            <div class="admin-panel-box">
+                <h3 style="font-family:'Cinzel',serif; margin-bottom:20px; text-align:center;">İçerik Ekle</h3>
+                <div class="form-group">
+                    <label>Kategori</label>
+                    <select id="ekleKategori" class="form-control">
+                        <option value="wallpapers">Wallpaper (Resim Yükle)</option>
+                        <option value="edits">Edit (MP4 Video Yükle)</option>
+                        <option value="music">Müzik (Ses Dosyası Yükle - MP3)</option>
+                        <option value="discord">Discord Sunucusu (Link)</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Baslik</label>
+                    <input type="text" id="ekleBaslik" class="form-control" placeholder="Baslik yazin">
+                </div>
+                <div class="form-group" id="aciklamaGrubu">
+                    <label>Aciklama</label>
+                    <input type="text" id="ekleAciklama" class="form-control" placeholder="Aciklama yazin">
+                </div>
+                <div class="form-group" id="dosyaAlani">
+                    <label id="dosyaLabel">Bilgisayardan Resim Seç</label>
+                    <input type="file" id="ekleDosya" class="form-control" accept="image/*">
+                </div>
+                <div class="form-group" id="linkAlani" style="display:none;">
+                    <label>Discord Linki</label>
+                    <input type="text" id="ekleLink" class="form-control" placeholder="https://discord.gg/...">
+                </div>
+                <button class="auth-btn" id="ekleKaydetBtn" style="width:100%; margin-top:10px;">Ekle</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- GİRİŞ MODALI -->
+    <div class="modal" id="girisModal">
+        <div class="modal-content">
+            <span class="close-modal" id="modalKapatBtn">&times;</span>
+            <h3 style="font-family:'Cinzel',serif; margin-bottom:20px;">Admin Girisi</h3>
+            <input type="text" id="kullaniciAdi" class="form-control" placeholder="Kullanici adi (admin)" style="margin-bottom:15px;">
+            <input type="password" id="sifre" class="form-control" placeholder="Sifre (12345)" style="margin-bottom:15px;">
+            <button class="auth-btn" id="girisYapBtn" style="width:100%;">Giris Yap</button>
+        </div>
+    </div>
+
+    <script>
+        let veriler = JSON.parse(localStorage.getItem('kuznetsovDB')) || {
+            wallpapers: [{title: "Ornek Wallpaper", desc: "Mor tema", img: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=600&q=80"}],
+            discord: [{title: "Kuznetsov Klan", desc: "Ana Discord sunucumuz", link: "https://discord.com"}],
+            edits: [{title: "Ornek Edit", desc: "Aksiyon klibi", src: "https://www.w3schools.com/html/mov_bbb.mp4"}],
+            music: [{title: "Vibe Şarkısı", src: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3"}]
+        };
+
+        let adminMi = false;
+
+        function sayfaGecis(id) {
+            let bolumler = document.querySelectorAll('.bolum');
+            for(let i=0; i<bolumler.length; i++) {
+                bolumler[i].classList.remove('goster');
+            }
+            let linkler = document.querySelectorAll('nav ul li a');
+            for(let i=0; i<linkler.length; i++) {
+                linkler[i].classList.remove('aktif');
+            }
+            
+            let hedef = document.getElementById(id);
+            if(hedef) hedef.classList.add('goster');
+
+            let aktifLink = document.getElementById('link-' + id);
+            if(aktifLink) aktifLink.classList.add('aktif');
+        }
+
+        function listeleHerSey() {
+            let wGrid = document.getElementById('wallpaperGrid');
+            if(wGrid) {
+                wGrid.innerHTML = '';
+                for(let i=0; i<veriler.wallpapers.length; i++) {
+                    let item = veriler.wallpapers[i];
+                    wGrid.innerHTML += '<div class="card"><img src="' + item.img + '" class="card-img"><div class="card-content"><h3>' + item.title + '</h3><p>' + item.desc + '</p><a href="' + item.img + '" download target="_blank" class="card-btn">İndir</a><button class="delete-btn" onclick="sil(\'wallpapers\', ' + i + ')">Sil</button></div></div>';
+                }
+            }
+
+            let dGrid = document.getElementById('discordGrid');
+            if(dGrid) {
+                dGrid.innerHTML = '';
+                for(let i=0; i<veriler.discord.length; i++) {
+                    let item = veriler.discord[i];
+                    dGrid.innerHTML += '<div class="card"><div class="card-content"><h3>' + item.title + '</h3><p>' + item.desc + '</p><a href="' + item.link + '" target="_blank" class="card-btn">Katıl</a><button class="delete-btn" onclick="sil(\'discord\', ' + i + ')">Sil</button></div></div>';
+                }
+            }
+
+            let eGrid = document.getElementById('editGrid');
+            if(eGrid) {
+                eGrid.innerHTML = '';
+                for(let i=0; i<veriler.edits.length; i++) {
+                    let item = veriler.edits[i];
+                    eGrid.innerHTML += '<div class="card"><video src="' + item.src + '" class="card-video" controls></video><div class="card-content"><h3>' + item.title + '</h3><p>' + item.desc + '</p><a href="' + item.src + '" download target="_blank" class="card-btn">Videoyu İndir</a><button class="delete-btn" onclick="sil(\'edits\', ' + i + ')">Sil</button></div></div>';
+                }
+            }
+
+            let mContainer = document.getElementById('musicListContainer');
+            if(mContainer) {
+                mContainer.innerHTML = '';
+                for(let i=0; i<veriler.music.length; i++) {
+                    let item = veriler.music[i];
+                    mContainer.innerHTML += '<div style="background: rgba(0,0,0,0.4); padding: 15px; border-radius: 8px; border: 1px solid rgba(168, 85, 247, 0.3);"><h3 style="margin-bottom: 10px; color: #fff; font-size: 18px;">' + item.title + '</h3><audio controls style="width: 100%;"><source src="' + item.src + '" type="audio/mpeg"></audio><button class="delete-btn" style="margin-top: 10px;" onclick="sil(\'music\', ' + i + ')">Şarkıyı Sil</button></div>';
+                }
+            }
+
+            localStorage.setItem('kuznetsovDB', JSON.stringify(veriler));
+        }
+
+        function sil(kat, index) {
+            if(confirm("Silmek istediğinize emin misiniz?")) {
+                veriler[kat].splice(index, 1);
+                listeleHerSey();
+            }
+        }
+
+        window.onload = function() {
+            listeleHerSey();
+
+            let navLinks = document.querySelectorAll('nav ul li a');
+            for(let i = 0; i < navLinks.length; i++) {
+                navLinks[i].addEventListener('click', function() {
+                    let target = this.getAttribute('data-target');
+                    sayfaGecis(target);
+                });
+            }
+
+            document.getElementById('toWallpapersBtn').addEventListener('click', function() {
+                sayfaGecis('wallpapers');
+            });
+
+            document.getElementById('girisBtn').addEventListener('click', function() {
+                if(adminMi) {
+                    adminMi = false;
+                    document.getElementById('link-admin').style.display = 'none';
+                    this.innerText = 'Giris Yap';
+                    document.getElementById('govde').classList.remove('admin-aktif');
+                    sayfaGecis('home');
+                    alert("Çıkış yapıldı.");
+                } else {
+                    document.getElementById('girisModal').style.display = 'flex';
+                }
+            });
+
+            document.getElementById('modalKapatBtn').addEventListener('click', function() {
+                document.getElementById('girisModal').style.display = 'none';
+            });
+
+            document.getElementById('girisYapBtn').addEventListener('click', function() {
+                let u = document.getElementById('kullaniciAdi').value;
+                let p = document.getElementById('sifre').value;
+
+                if(u === 'admin' && p === '12345') {
+                    adminMi = true;
+                    document.getElementById('link-admin').style.display = 'block';
+                    document.getElementById('girisBtn').innerText = 'Cikis Yap';
+                    document.getElementById('govde').classList.add('admin-aktif');
+                    document.getElementById('girisModal').style.display = 'none';
+                    alert("Giriş başarılı!");
+                    sayfaGecis('admin');
+                } else {
+                    alert("Hatalı kullanıcı adı veya şifre! (Admin: admin, Şifre: 12345)");
+                }
+            });
+
+            document.getElementById('ekleKategori').addEventListener('change', function() {
+                let kat = this.value;
+                let dosyaLabel = document.getElementById('dosyaLabel');
+                let dosyaInput = document.getElementById('ekleDosya');
+                let aciklamaGrubu = document.getElementById('aciklamaGrubu');
+
+                if(kat === 'discord') {
+                    document.getElementById('dosyaAlani').style.display = 'none';
+                    document.getElementById('linkAlani').style.display = 'block';
+                    aciklamaGrubu.style.display = 'block';
+                } else if(kat === 'edits') {
+                    document.getElementById('dosyaAlani').style.display = 'block';
+                    document.getElementById('linkAlani').style.display = 'none';
+                    aciklamaGrubu.style.display = 'block';
+                    dosyaLabel.innerText = 'Bilgisayardan MP4 Video Seç';
+                    dosyaInput.accept = 'video/mp4,video/*';
+                } else if(kat === 'music') {
+                    document.getElementById('dosyaAlani').style.display = 'block';
+                    document.getElementById('linkAlani').style.display = 'none';
+                    aciklamaGrubu.style.display = 'none';
+                    dosyaLabel.innerText = 'Bilgisayardan Müzik Seç (MP3)';
+                    dosyaInput.accept = 'audio/*';
+                } else {
+                    document.getElementById('dosyaAlani').style.display = 'block';
+                    document.getElementById('linkAlani').style.display = 'none';
+                    aciklamaGrubu.style.display = 'block';
+                    dosyaLabel.innerText = 'Bilgisayardan Resim Seç';
+                    dosyaInput.accept = 'image/*';
+                }
+            });
+
+            document.getElementById('ekleKaydetBtn').addEventListener('click', function() {
+                let kat = document.getElementById('ekleKategori').value;
+                let baslik = document.getElementById('ekleBaslik').value;
+                let aciklama = document.getElementById('ekleAciklama').value;
+
+                if(!baslik) {
+                    alert("Lütfen başlık yazın!");
+                    return;
+                }
+
+                if(kat === 'discord') {
+                    let link = document.getElementById('ekleLink').value || 'https://discord.com';
+                    veriler.discord.push({title: baslik, desc: aciklama, link: link});
+                    islemBitir(kat);
+                } else {
+                    let dosyaInput = document.getElementById('ekleDosya');
+                    if(dosyaInput.files && dosyaInput.files[0]) {
+                        let file = dosyaInput.files[0];
+                        let reader = new FileReader();
+                        
+                        reader.onload = function(e) {
+                            let base64Veri = e.target.result;
+                            if(kat === 'music') {
+                                veriler.music.push({title: baslik, src: base64Veri});
+                            } else if(kat === 'edits') {
+                                veriler.edits.push({title: baslik, desc: aciklama, src: base64Veri});
+                            } else {
+                                veriler[kat].push({title: baslik, desc: aciklama, img: base64Veri});
+                            }
+                            islemBitir(kat);
+                        };
+                        
+                        reader.readAsDataURL(file);
+                    } else {
+                        alert("Lütfen bilgisayardan bir dosya seçin!");
+                    }
+                }
+            });
+        };
+
+        function islemBitir(kat) {
+            listeleHerSey();
+            alert("Başarıyla eklendi!");
+            document.getElementById('ekleBaslik').value = '';
+            document.getElementById('ekleAciklama').value = '';
+            document.getElementById('ekleDosya').value = '';
+            document.getElementById('ekleLink').value = '';
+            sayfaGecis(kat);
+        }
+    </script>
+</body>
+</html>
